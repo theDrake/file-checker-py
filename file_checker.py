@@ -2,7 +2,7 @@
 
 import sys
 
-DEFAULT_MAX_LINE_LENGTH = 80 # Including end-of-line character.
+DEFAULT_MAX_LINE_LENGTH = 79 # Excludes end-of-line character.
 DEFAULT_SPACES_PER_TAB = 2
 PYTHON_SPACES_PER_TAB = 4
 
@@ -31,24 +31,24 @@ def CheckLineLengths(filename, max_length=DEFAULT_MAX_LINE_LENGTH):
     fin = open(filename, 'r')
     lines = fin.readlines()
     fin.close()
-    lines_exceeding_max_length = []
+    line_num = 0
+    lines_exceeding_max_length = {}
     for line in lines:
+        line_num += 1
         if line.length() > max_length:
-            num_lines_exceeding_max_length += 1
+            lines_exceeding_max_length[line_num] = line
     print 'File "' + filename + '" contains ' + \
-          num_lines_exceeding_max_length + ' lines exceeding ' + max_length + \
-          ' characters.'
+          len(lines_exceeding_max_length) + ' lines exceeding ' + \
+          max_length + ' characters.'
 
     return lines_exceeding_max_length
 
 def main():
+    input_list = []
     if len(sys.argv) == 1:
-        print "Enter filename/directory: "
-        inputString =
+        input_list.append(raw_input("Enter filename/directory: "))
     else:
-        inputList = sys.argv[1:]
-
-    CheckLineLengths(sys.argv[1])
+        input_list.extend(sys.argv[1:])
 
 if __name__ == "__main__":
     main()

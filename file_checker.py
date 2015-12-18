@@ -1,8 +1,8 @@
 #!/usr/bin/python2
 
-import sys
+import sys, os, os.path
 
-DEFAULT_MAX_LINE_LENGTH = 79 # Excludes end-of-line character.
+DEFAULT_MAX_LINE_LENGTH = 79  # Excludes EOL/EOF.
 DEFAULT_SPACES_PER_TAB = 2
 PYTHON_SPACES_PER_TAB = 4
 

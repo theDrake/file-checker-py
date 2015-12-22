@@ -44,6 +44,7 @@ def CheckLineLengths(filename, max_length=DEFAULT_MAX_LINE_LENGTH):
     return lines_exceeding_max_length
 
 def main():
+    os.mkdir('./file_checker_backups')
     input_list = []
     if len(sys.argv) == 1:
         input_list.append(raw_input("Enter filename/directory: "))

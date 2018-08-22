@@ -2,12 +2,11 @@
 
 import sys, os, os.path
 
-DEFAULT_MAX_LINE_LENGTH = 79  # Excludes EOL/EOF.
+DEFAULT_MAX_LINE_LENGTH = 80
 DEFAULT_SPACES_PER_TAB = 2
 PYTHON_SPACES_PER_TAB = 4
 
-def CheckIndentation(filename,
-                     spaces_per_tab=DEFAULT_SPACES_PER_TAB,
+def CheckIndentation(filename, spaces_per_tab=DEFAULT_SPACES_PER_TAB,
                      replace_tabs=False):
     line_num = 0
     lines_with_tabs = {}

@@ -1,54 +1,71 @@
 #!/usr/bin/python2
 
-import sys, os, os.path
+import sys
+import os
+from os import path
 
-DEFAULT_MAX_LINE_LENGTH = 80
-DEFAULT_SPACES_PER_TAB = 2
-PYTHON_SPACES_PER_TAB = 4
+_DEFAULT_MAX_LINE_LENGTH = 80
 
-def CheckIndentation(filename, spaces_per_tab=DEFAULT_SPACES_PER_TAB,
-                     replace_tabs=False):
-    line_num = 0
-    lines_with_tabs = {}
-    tab_replacement = ''
-    for i in range(spaces_per_tab):
-        tab_replacement += ' '
-    f = open(filename, 'rw')
-    lines = f.readlines()
-    for line in lines:
-        line_num += 1
-        if line.contains('\t'):
-            lines_with_tabs[line_num] = line
-            line = line.replace('\t', tab_replacement)
-        if replace_tabs:
-            f.write(line)
-    f.close()
-
-    return lines_with_tabs
-
-def CheckLineLengths(filename, max_length=DEFAULT_MAX_LINE_LENGTH):
+def _check_file(filename, max_line_len, check_line_len, check_tabs):
     fin = open(filename, 'r')
     lines = fin.readlines()
     fin.close()
     line_num = 0
-    lines_exceeding_max_length = {}
+    lines_exceeding_max_length = []
+    lines_with_tabs = []
+    issue_found = False
     for line in lines:
         line_num += 1
-        if line.length() > max_length:
-            lines_exceeding_max_length[line_num] = line
-    print 'File "' + filename + '" contains ' + \
-          len(lines_exceeding_max_length) + ' lines exceeding ' + \
-          max_length + ' characters.'
+        if check_line_len and len(line) > max_line_len + 1: # exclude \n
+            lines_exceeding_max_length.append(line_num)
+            issue_found = True
+        if check_tabs and line.find('\t') != -1:
+            lines_with_tabs.append(line_num)
+            issue_found = True
+    if issue_found:
+        print(filename)
+        if check_line_len and len(lines_exceeding_max_length) > 0:
+            print("\t" + "Line(s) exceeding " + str(max_line_len) +
+                  " characters: \n\t\t" + str(lines_exceeding_max_length))
+        if check_tabs and len(lines_with_tabs) > 0:
+            print("\t" + "Tab(s) found in the following line(s): \n\t\t" +
+                  str(lines_with_tabs))
 
-    return lines_exceeding_max_length
+def _check_dir(dir, max_line_len, check_line_len, check_tabs):
+    if dir[-1] != '/':
+        dir += '/'
+    subdirs = []
+    for i in os.listdir(dir):
+        if path.isdir(i):
+            subdirs.append(i)
+        elif path.isfile(dir + i):
+            _check_file(dir + i, max_line_len, check_line_len, check_tabs)
+    for s in subdirs:
+        _check_dir(dir + s, max_line_len, check_line_len, check_tabs)
 
 def main():
-    os.mkdir('./file_checker_backups')
+    max_line_len = _DEFAULT_MAX_LINE_LENGTH
+    check_line_len = True
+    check_tabs = True
     input_list = []
     if len(sys.argv) == 1:
-        input_list.append(raw_input("Enter filename/directory: "))
+        print("Usage: file_checker.py dir [--maxlen=n | --no-len-check | "
+              "--no-tab-check]")
     else:
-        input_list.extend(sys.argv[1:])
+        for arg in sys.argv[1:]:
+            if arg[:9] == "--maxlen=":
+                max_line_len = int(arg[9:])
+            elif arg == "--no-len-check":
+                check_line_len = False
+            elif arg == "--no-tab-check":
+                check_tabs = False
+            else:
+                input_list.append(arg)
+        for i in input_list:
+            if path.isdir(i):
+                _check_dir(path.abspath(i), max_line_len, check_line_len, check_tabs)
+            else:
+                print("Invalid input: " + i)
 
 if __name__ == "__main__":
     main()

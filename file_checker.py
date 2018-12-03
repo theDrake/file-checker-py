@@ -26,9 +26,9 @@ def _check_file(filename, max_line_len, check_line_len, check_tabs):
         print(filename)
         if check_line_len and len(lines_exceeding_max_length) > 0:
             print("\t" + "Line(s) exceeding " + str(max_line_len) +
-                  " characters: \n\t\t" + str(lines_exceeding_max_length))
+                  " characters:\t" + str(lines_exceeding_max_length))
         if check_tabs and len(lines_with_tabs) > 0:
-            print("\t" + "Tab(s) found in the following line(s): \n\t\t" +
+            print("\t" + "Tab(s) found in the following line(s):\t" +
                   str(lines_with_tabs))
 
 def _check_dir(dir, max_line_len, check_line_len, check_tabs):
@@ -63,7 +63,8 @@ def main():
                 input_list.append(arg)
         for i in input_list:
             if path.isdir(i):
-                _check_dir(path.abspath(i), max_line_len, check_line_len, check_tabs)
+                _check_dir(path.abspath(i), max_line_len, check_line_len,
+                           check_tabs)
             else:
                 print("Invalid input: " + i)
 
